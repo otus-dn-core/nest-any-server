@@ -11,9 +11,3 @@ export class CreateUserDto {
   @IsNotEmpty()
   readonly password: string;
 }
-
-// export class CreateUserDto {
-//   readonly username: string;
-//   readonly email: string;
-//   readonly password: string;
-// }
