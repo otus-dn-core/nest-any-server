@@ -6,6 +6,9 @@ import {
   Param,
   UseGuards,
   Delete,
+  Put,
+  ValidationPipe,
+  UsePipes,
 } from '@nestjs/common';
 import { ArticleService } from '@app/article/article.service';
 import { AuthGuard } from '@app/user/guards/auth.guard';
@@ -20,6 +23,7 @@ export class ArticleController {
 
   @Post()
   @UseGuards(AuthGuard)
+  @UsePipes(new ValidationPipe())
   async create(
     @User() currentUser: UserEntity,
     @Body('article') createArticleDto: CreateArticleDto,
@@ -46,5 +50,21 @@ export class ArticleController {
     @Param('id') articleId: number,
   ) {
     return await this.articleService.deleteArticle(articleId, currentUserId);
+  }
+
+  @Put(':id')
+  @UseGuards(AuthGuard)
+  @UsePipes(new ValidationPipe())
+  async updateArticle(
+    @User('id') currentUserId: number,
+    @Param('id') articleId: number,
+    @Body('article') updateArticleDto: CreateArticleDto,
+  ): Promise<ArticlesResponseInterface> {
+    const article = await this.articleService.updateArticle(
+      articleId,
+      updateArticleDto,
+      currentUserId,
+    );
+    return this.articleService.buildArticleResponse(article);
   }
 }
